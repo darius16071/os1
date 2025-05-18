@@ -54,7 +54,7 @@ volatile sig_atomic_t sigterm_received = 0; // Primire SIGTERM (stop)
 // --- Declaratii Anticipate ---
 void monitor_main_loop();
 void monitor_list_hunts();
-//void monitor_list_all_treasures(); // This one might not be directly used if commands are specific
+//void monitor_list_all_treasures(); 
 int count_treasures_in_hunt(const char *hunt_id);
 void list_treasures_for_hunt(const char *hunt_id);
 void print_treasure_details(const Treasure *t); // Functie helper pt afisare comoara
@@ -119,8 +119,7 @@ void process_monitor_command_file() {
     FILE *fp_cmd = fopen(COMMAND_FILE, "r");
     if (!fp_cmd) {
         fprintf(stderr, "[Monitor %d] Avertisment: Nu pot deschide %s pentru citire.\n", getpid(), COMMAND_FILE);
-        // Optionally, try to remove if it exists but can't be opened, though unlink below should handle it
-        // unlink(COMMAND_FILE); 
+       
         return;
     }
 
@@ -173,9 +172,9 @@ void process_monitor_command_file() {
                 } else if (viewer_pid == 0) {
                     // Proces copil (viewer grandchild) - va executa treasure_manager
                     // printf("[Monitor Child - Viewer %d] Executare: ./treasure_manager view %s %s\n", getpid(), hunt_id_arg, treasure_id_str_arg);
-                    // fflush(stdout); // Output-ul treasure_manager va fi mai relevant
+                    // fflush(stdout); // Output-ul treasure_manager 
 
-                    // Asigurati-va ca 'treasure_manager' este compilat si accesibil (ex: in ./ )
+                    
                     execlp("./treasure_manager", "treasure_manager", "view", hunt_id_arg, treasure_id_str_arg, (char *)NULL);
                     
                     // Daca execlp returneaza, a aparut o eroare
@@ -238,7 +237,7 @@ void monitor_main_loop() {
             process_monitor_command_file(); 
         }
 
-        // Asteapta eficient urmatorul semnal
+        // Asteapta urmatorul semnal
         pause();
     }
 
@@ -386,17 +385,7 @@ void list_treasures_for_hunt(const char *hunt_id) {
     fflush(stderr);
 }
 
-// Monitor: Listeaza TOATE comorile din TOATE hunt-urile (nu este direct apelata de comenzi hub, dar e un utilitar)
-// Aceasta functie nu este necesara pentru cerintele explicite ale hub-ului, care trimite comenzi specifice.
-// O lasam comentata sau o putem elimina pentru a simplifica.
-/*
-void monitor_list_all_treasures() {
-     printf("\n--- [Monitor] Listare Toate Comorile (Actiune SIGUSR2 Generica) ---\n");
-     DIR *dirp = opendir(".");
-     // ... (restul implementarii) ...
-     fflush(stdout);
-}
-*/
+
 
 
 // --- Functia Principala a Treasure Hub ---
@@ -432,7 +421,7 @@ int main() {
                     printf("[Hub] Trimit SIGTERM monitorului (PID %d) la iesire.\n", monitor_pid);
                     kill(monitor_pid, SIGTERM);
                     // Asteptam putin sa se proceseze, dar nu blocam la infinit
-                    // waitpid(monitor_pid, NULL, 0); // Optional, poate fi scos daca vrem iesire rapida
+                    // waitpid(monitor_pid, NULL, 0);
                 }
                 break; 
             } else {
